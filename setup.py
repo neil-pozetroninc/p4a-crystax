@@ -14,7 +14,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="p4a-crystax",
-    version="1.0",
+    version="1.1",
     author="frmdstryr",
     author_email="frmdstryr@gmail.com",
     license='MIT',
@@ -27,6 +27,8 @@ setup(
         'p4a_recipe': [
             'python2crystax = p4a_crystax.python2crystax.__init__:get_recipe',
             'python3crystax = p4a_crystax.python3crystax.__init__:get_recipe',
+            'hostpython2crystax = p4a_crystax.hostpython2crystax.__init__:get_recipe',
+            'hostpython3crystax = p4a_crystax.hostpython3crystax.__init__:get_recipe',
         ]
     }
 )
