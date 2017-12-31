@@ -95,7 +95,12 @@ class Python2Recipe(TargetPythonRecipe):
 
     def _patch_dev_defaults(self, fp, target_ver):
         for line in fp:
-            if 'OPENSSL_VERSIONS=' in line:
+            if 'DEFAULT_PLATFORM=' in line:
+                #: Bump to 21
+                #: TODO: Don't hardcode
+                yield 'DEFAULT_PLATFORM=android-21\n'
+
+            elif 'OPENSSL_VERSIONS=' in line:
                 versions = line.split('"')[1].split(' ')
                 if versions[0] == target_ver:
                     raise ValueError('Patch not needed')
@@ -106,7 +111,8 @@ class Python2Recipe(TargetPythonRecipe):
                 versions.insert(0, target_ver)
 
                 #yield 'DEFAULT_OPENSSL_VERSION="{}"'.format(' '.join(versions))
-                yield 'OPENSSL_VERSIONS="{}"'.format(' '.join(versions))
+                yield 'OPENSSL_VERSIONS="{}"\n'.format(' '.join(versions))
+
             else:
                 yield line
 
@@ -132,7 +138,8 @@ class Python2Recipe(TargetPythonRecipe):
 
         # find out why _ssl.so is missing
 
-        source_dir = join(self.ctx.ndk_dir, 'sources', 'openssl', ssl_recipe.version)
+        source_dir = join(self.ctx.ndk_dir, 'sources', 'openssl',
+                          ssl_recipe.version)
         if not os.path.exists(source_dir):
             return 0, 'Openssl version not present'
 
@@ -141,7 +148,7 @@ class Python2Recipe(TargetPythonRecipe):
         if not os.path.exists(join(source_dir, 'Android.mk')):
             return 1.1, 'Android.mk is missing in openssl source'
 
-        include_dir = join(source_dir, 'include','openssl')
+        include_dir = join(source_dir, 'include', 'openssl')
         if not os.path.exists(join(include_dir,  'opensslconf.h')):
             return 1.2, 'Openssl include dir missing'
 
@@ -172,9 +179,19 @@ class Python2Recipe(TargetPythonRecipe):
             info('Openssl and crystax-python combination may require '
                  'recompilation of python...')
             ssl_recipe = self.get_recipe('openssl', self.ctx)
+
+            #: Clean every time as we build for multiple arches in enaml-native
+            # ssl_dir = join(self.ctx.ndk_dir, 'sources', 'openssl',
+            #                   ssl_recipe.version)
+            # if exists(ssl_dir):
+            #     shprint(sh.rm, '-Rf', ssl_dir)
+            # stage = 0
+
+            #: Old "smart" way doesn't support multiple arches
             stage, msg = self.check_for_sslso(ssl_recipe, arch)
             stage = 0 if stage < 5 else stage
             info(msg)
+
             openssl_build_dir = ssl_recipe.get_build_dir(arch.arch)
             openssl_ndk_dir = join(self.ctx.ndk_dir, 'sources', 'openssl',
                                    ssl_recipe.version)

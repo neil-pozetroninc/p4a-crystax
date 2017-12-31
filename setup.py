@@ -14,7 +14,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="p4a-crystax",
-    version="1.1",
+    version="1.3.0",
     author="frmdstryr",
     author_email="frmdstryr@gmail.com",
     license='MIT',
