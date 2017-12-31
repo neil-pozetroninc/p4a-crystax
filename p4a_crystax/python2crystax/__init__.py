@@ -62,7 +62,7 @@ def realpath(fname):
 
 class Python2Recipe(TargetPythonRecipe):
     version = '2.7'
-    url = ('https://github.com/crystax/android-vendor-python-{}-{}/archive/master.zip'.format(*version.split('.')))
+    url = ('https://github.com/neil-pozetroninc/android-vendor-python-{}-{}/archive/master.zip'.format(*version.split('.')))
     name = 'python2crystax'
 
     depends = ['hostpython2crystax']  
